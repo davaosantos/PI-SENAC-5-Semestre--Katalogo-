@@ -1,0 +1,42 @@
+.filtro-pesquisa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    margin: auto;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    width: 80%;
+    background-color: #980122;
+    border-radius: 10px;
+    color: #fff;
+  }
+  
+  .filtro-pesquisa label {
+    margin-right: 10px;
+  }
+  
+  .filtro-pesquisa select {
+    padding: 5px;
+    border-radius: 3px;
+    border: none;
+    background-color: #ddd;
+    color: #333;
+  }
+  
+  .filtro-pesquisa button {
+    padding: 5px 10px;
+    border-radius: 3px;
+    border: none;
+    background-color: #ddd;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .filtro-pesquisa button:hover {
+    background-color: #333;
+    color: #fff;
+  }
+  

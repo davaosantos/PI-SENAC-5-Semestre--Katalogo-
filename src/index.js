@@ -1,26 +1,33 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Login from './pages/login/login';
+import ListaProdutos from './pages/listaProdutos/listaProdutos';
 
-import { Routes, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import CadastroProdutos from './pages/cadastroProduto/cadastroProdutos';
+import CadastroEstabs from './pages/cadastroEstab/cadastroEstab';
+import ListaEstabs from './pages/listaEstabs/listaEstabs';
+import Carrinho from './pages/carrinho/carrinho';
 
-import { BrowserRouter, Route} from 'react-router-dom';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-
     <BrowserRouter>
-
-      <Routes>
-        <Route path = '/login'  exact={true} element={<Login />}></Route>
-      </Routes>
-      
+      <Switch>
+      <Route path='/' exact={true} component={App} />
+        <Route path='/login' exact={true} component={Login} />
+        <Route path='/listaProdutos' component={ListaProdutos} />
+        <Route path='/listaEstabs' component={ListaEstabs} />
+        <Route path='/cadastroProduto' component={CadastroProdutos} />
+        <Route path='/cadastroEstab' component={CadastroEstabs} />
+        <Route path='/carrinho' component={Carrinho} />
+        
+      </Switch>
     </BrowserRouter>
   </React.StrictMode>
 );

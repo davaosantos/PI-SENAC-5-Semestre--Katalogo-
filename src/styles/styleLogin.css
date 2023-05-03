@@ -9,7 +9,7 @@
   
 
 html,body{
-background-image: url('../assets/backgroundFemsa.jpg');
+/*background-image: url('../assets/backgroundFemsa.jpg');*/
 background-size: cover;
 background-repeat: no-repeat;
 height: 100%;
@@ -67,7 +67,7 @@ box-shadow: 0 0 0 0 !important;
 }
 
 .remember{
-color: white;
+color: black;
 }
 
 .remember input
@@ -104,4 +104,9 @@ margin-left: 4px;
    color: #980122 !important;
    font-size: 40px;
    text-align: center;
+}
+
+.btnVoltar{
+  color: black !important;
+  text-decoration: none;
 }

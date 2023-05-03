@@ -1,0 +1,21 @@
+.formCadastroProduto{
+    margin: auto;
+    width: 50%;
+    margin-top: 5%;
+    font-size: large;
+}
+
+.submitProduto{
+    background-color: #980122;
+    margin-left: 40%;
+}
+
+select[multiple] option:checked {
+    background-color: red;
+  }
+
+  .regioesEstabs {
+    margin-right: 6%;
+  }
+
+  

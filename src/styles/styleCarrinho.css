@@ -1,0 +1,10 @@
+.btnCarrinhoAdd{
+    width: 30px;
+    height: 30px;
+}
+
+.carrinho {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
