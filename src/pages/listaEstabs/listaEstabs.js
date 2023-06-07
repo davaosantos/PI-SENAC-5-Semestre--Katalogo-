@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import Header from '../../components/Header';
 import '../../styles/styleListaProdutos.css';
-import FiltroPesquisa from '../../components/FiltroPesquisa/FiltroPesquisa';
-import {
-  Card, Button, CardImg, CardTitle, CardText, CardGroup,
-  CardSubtitle, CardBody, Col, Row
-} from 'reactstrap';
 import FiltroPesquisaEstab from '../../components/FiltroPesquisaEstab/FiltroPesquisaEstab';
-
+import { Button } from 'reactstrap';
 
 class ListaEstabs extends Component {
   constructor(props) {
@@ -15,6 +10,8 @@ class ListaEstabs extends Component {
 
     this.state = {
       resultados: [],
+      showModal: false,
+      modalEstabelecimento: null,
     };
   }
 
@@ -23,8 +20,16 @@ class ListaEstabs extends Component {
     this.setState({ resultados });
   };
 
+  abrirModal = (estabelecimento) => {
+    this.setState({ showModal: true, modalEstabelecimento: estabelecimento });
+  };
+
+  fecharModal = () => {
+    this.setState({ showModal: false, modalEstabelecimento: null });
+  };
+
   render() {
-    const { resultados } = this.state;
+    const { resultados, showModal, modalEstabelecimento } = this.state;
 
     return (
       <div>
@@ -37,15 +42,14 @@ class ListaEstabs extends Component {
               {resultados.map((estabelecimento) => (
                 <div key={estabelecimento.id} className="col-12 col-md-6 col-lg-4 mb-4">
                   <div className="card">
-                    <img src={`data:image/png;base64,${estabelecimento.imagem}`} className="card-img-top" alt="" />
+                    <img src={`data:image/png;base64,${estabelecimento.imagem}`} className="card-img-top" alt={estabelecimento.nome} />
                     <div className="card-body">
                       <h5 className="card-title">{estabelecimento.nome}</h5>
                       <p className="card-text">
                         <span type="textarea">{estabelecimento.descricao}</span>
                       </p>
-                      <Button className="btnDetalhesEstab">Detalhes</Button>
+                      <Button className="btnDetalhesEstab" onClick={() => this.abrirModal(estabelecimento)}>Detalhes</Button>
                     </div>
-
                   </div>
                 </div>
               ))}
@@ -53,6 +57,18 @@ class ListaEstabs extends Component {
           </div>
         </div>
 
+        {showModal && (
+          <div className="custom-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" onClick={this.fecharModal}>
+            <div className="custom-modal-content">
+              <span className="custom-modal-close" onClick={this.fecharModal}>&times;</span>
+              <img src={`data:image/png;base64,${modalEstabelecimento.imagem}`} alt={modalEstabelecimento.nome} />
+              <h2 id="modal-title">{modalEstabelecimento.nome}</h2>
+              <p>{modalEstabelecimento.descricao}</p>
+              <p>Código do estabelecimento: {modalEstabelecimento.id}</p>
+              {/* Outros detalhes do estabelecimento */}
+            </div>
+          </div>
+        )}
       </div>
     );
   }

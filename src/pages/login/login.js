@@ -1,32 +1,37 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../styles/styleLogin.css';
 import { NavLink, useHistory } from 'react-router-dom';
+import { UserContext } from '../../context/userContext';
 
-function Login() {
+function Login({ location }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
+  const { updateUsername, updateProfile } = useContext(UserContext);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const endpoint = "http://localhost:8080/login";
 
     axios.post(endpoint, { username, password })
       .then(response => {
-        console.log("RESPOSTA : " + response.data )
+        console.log("RESPOSTA: " + response.data);
 
-        if(response.data == "Login successful"){
-          history.push('/listaProdutos'); // Redireciona para a página /dashboard
-        }
+        if (response.status === 200 && response.data.message === "Login successful") {
+          updateUsername(username);
+          updateProfile(response.data.profile);
+          console.log(response.data.profile); // Exibir o valor do perfil retornado pela API
+          console.log(updateProfile); // Exibir o valor atualizado do perfil no contexto
       
+          history.push('/listaProdutos');
+        }
       })
       .catch(error => {
-        // Aqui você pode tratar o erro da API, como exibir uma mensagem de erro para o usuário
+        // Trate o erro da API aqui
+        alert("Usuario ou senha incorretos")
       });
   }
-
   return (
     <div className="container login-class">
       <div className="d-flex justify-content-center h-100">
@@ -62,11 +67,10 @@ function Login() {
               Don't have an account?<a>Sign Up</a>
             </div>
             <div className="d-flex justify-content-center">
-            
               <a>Forgot your password?</a>
             </div>
             <div className="d-flex justify-content-center">
-              <NavLink className="btnVoltar"  to="/">Return</NavLink>
+              <NavLink className="btnVoltar" to="/">Return</NavLink>
             </div>
           </div>
         </div>

@@ -1,13 +1,25 @@
 import React, { Component } from 'react';
+import { NavLink } from 'react-router-dom';
 import Header from '../../components/Header';
 import '../../styles/styleListaProdutos.css';
 import FiltroPesquisa from '../../components/FiltroPesquisa/FiltroPesquisa';
 import {
-  Card, Button, CardImg, CardTitle, CardText, CardGroup,
-  CardSubtitle, CardBody, Col, Row, Modal, ModalHeader, ModalBody, ModalFooter
+  Card,
+  Button,
+  CardImg,
+  CardTitle,
+  CardText,
+  CardGroup,
+  CardSubtitle,
+  CardBody,
+  Col,
+  Row,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from 'reactstrap';
-import { NavLink } from 'react-router-dom';
-import { FaShoppingBasket, IconName } from "react-icons/fa";
+import { FaShoppingBasket, FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
 
 class ListaProdutos extends Component {
   constructor(props) {
@@ -16,7 +28,7 @@ class ListaProdutos extends Component {
     this.state = {
       resultados: [],
       carrinho: [],
-      exibirModal: false
+      exibirModal: false,
     };
   }
 
@@ -26,7 +38,7 @@ class ListaProdutos extends Component {
   };
 
   adicionarProduto = (produto) => {
-    const produtoJaNoCarrinho = this.state.carrinho.some(p => p.id === produto.id);
+    const produtoJaNoCarrinho = this.state.carrinho.find((p) => p.id === produto.id);
     if (produtoJaNoCarrinho) {
       console.warn('Produto já está no carrinho');
       return;
@@ -34,30 +46,68 @@ class ListaProdutos extends Component {
 
     const novoProduto = {
       ...produto,
-      id: produto.id // adicione o ID do produto ao objeto
+      quantidade: 1, // Definindo a quantidade inicial como 1
     };
 
     const novoCarrinho = [...this.state.carrinho, novoProduto];
     this.setState({
-      carrinho: novoCarrinho
+      carrinho: novoCarrinho,
     });
-  }
+  };
 
   removerProduto = (produto) => {
     const novoCarrinho = this.state.carrinho.filter((p) => p.id !== produto.id);
     this.setState({
-      carrinho: novoCarrinho
+      carrinho: novoCarrinho,
     });
-  }
+  };
 
   toggleModal = () => {
     this.setState({
-      exibirModal: !this.state.exibirModal
+      exibirModal: !this.state.exibirModal,
     });
-  }
+  };
+
+  calcularValorTotal = () => {
+    return this.state.carrinho.reduce((total, produto) => {
+      return total + produto.preco * produto.quantidade;
+    }, 0);
+  };
+
+  incrementarQuantidade = (produto) => {
+    const novoCarrinho = this.state.carrinho.map((p) => {
+      if (p.id === produto.id) {
+        return {
+          ...p,
+          quantidade: p.quantidade + 1,
+        };
+      }
+      return p;
+    });
+    this.setState({
+      carrinho: novoCarrinho,
+    });
+  };
+
+  decrementarQuantidade = (produto) => {
+    const novoCarrinho = this.state.carrinho.map((p) => {
+      if (p.id === produto.id && p.quantidade > 1) {
+        return {
+          ...p,
+          quantidade: p.quantidade - 1,
+        };
+      }
+      return p;
+    });
+    this.setState({
+      carrinho: novoCarrinho,
+    });
+  };
 
   render() {
     const { resultados, carrinho, exibirModal } = this.state;
+    console.log(this.props);
+    const { username } = this.props.location.state || {};
 
     return (
       <div>
@@ -69,39 +119,96 @@ class ListaProdutos extends Component {
             <div className="row flow-offset-1">
               {resultados.map((produto) => (
                 <div key={produto.id} className="col-12 col-md-6 col-lg-4 mb-4">
-                <div className="card h-100">
-                  <img src={`data:image/png;base64,${produto.imagem}`} className="card-img-top" alt="" />
-                  <div className="card-body d-flex flex-column h-100">
-                    <h5 className="card-title">{produto.nome}</h5>
-                    <p className="card-text">
-                      <span className="card-subtitle mb-2 text-muted">{produto.categoria}</span>
-                      {produto.descricao}
-                    </p>
-                    <div className="mt-auto d-flex justify-content-between align-items-center">
-                      <div className="preco">R${produto.preco}</div>
-                      <Button className="btn-adicionar" onClick={() => this.adicionarProduto(produto)}>Adicionar</Button>
+                  <div className="card h-100">
+                    <img
+                      src={`data:image/png;base64,${produto.imagem}`}
+                      className="card-img-top"
+                      alt={produto.nome} // Adicione o texto alternativo para a imagem
+                    />
+                    <div className="card-body d-flex flex-column h-100">
+                      <h5 className="card-title">{produto.nome}</h5>
+                      <p className="card-text">
+                        <span className="card-subtitle mb-2 text-muted">{produto.categoria}</span>
+                        {produto.descricao}
+                      </p>
+                      <div className="mt-auto d-flex justify-content-between align-items-center">
+                        <div className="preco">R${produto.preco}</div>
+                        <Button
+                          className="btn-adicionar"
+                          onClick={() => this.adicionarProduto(produto)}
+                          aria-label={`Adicionar ${produto.nome} ao carrinho`} // Descrição textual para o botão
+                        >
+                          Adicionar
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
               ))}
             </div>
           </div>
         </div>
         <div className="carrinho">
-          <Button className="btnVerCarrinho" onClick={this.toggleModal}><FaShoppingBasket ></FaShoppingBasket></Button>
-          <Modal isOpen={exibirModal} toggle={this.toggleModal}>
-            <ModalHeader toggle={this.toggleModal}>Carrinho</ModalHeader>
+          <Button className="btnVerCarrinho" onClick={this.toggleModal}>
+            <FaShoppingBasket /> {carrinho.length > 0 && `+${carrinho.length}`}
+          </Button>
+          <Modal isOpen={exibirModal} toggle={this.toggleModal} aria-labelledby="carrinho-modal-title">
+            <ModalHeader toggle={this.toggleModal} id="carrinho-modal-title">
+              Carrinho
+            </ModalHeader>
             <ModalBody>
               {carrinho.map((produto) => (
-                <div key={produto.id}>
-                  <p>{produto.nome}</p>
-                  <Button onClick={() => this.removerProduto(produto)}>Remover</Button>
+                <div key={produto.id} className="produto-carrinho">
+                  <img
+                    src={`data:image/png;base64,${produto.imagem}`}
+                    className="produto-imagem"
+                    alt={produto.nome} // Adicione o texto alternativo para a imagem
+                  />
+                  <div>
+                    <p>{produto.nome}</p>
+                    <p>
+                      Valor por produto: R${produto.preco} | Quantidade: {produto.quantidade}
+                    </p>
+                    <div className="d-flex justify-content-center align-items-center">
+                      <Button
+                        className="btn-remover ml-2"
+                        onClick={() => this.removerProduto(produto)}
+                        aria-label={`Remover ${produto.nome} do carrinho`} // Descrição textual para o botão
+                      >
+                        <FaTrash />
+                      </Button>
+                      <div className="quantidade-botoes">
+                        <Button
+                          className="btn-quantidade"
+                          onClick={() => this.decrementarQuantidade(produto)}
+                          aria-label={`Diminuir quantidade de ${produto.nome}`} // Descrição textual para o botão
+                        >
+                          <FaMinus />
+                        </Button>
+                        <Button
+                          className="btn-quantidade"
+                          onClick={() => this.incrementarQuantidade(produto)}
+                          aria-label={`Aumentar quantidade de ${produto.nome}`} // Descrição textual para o botão
+                        >
+                          <FaPlus />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </ModalBody>
             <ModalFooter>
-              <Button color="secondary" onClick={this.toggleModal}>Fechar</Button>
+              <p>Valor total: R${this.calcularValorTotal()}</p>
+              <NavLink
+                to={{
+                  pathname: "/fechar-pedido",
+                  state: { carrinho: this.state.carrinho, username },
+                }}
+                className="btn btn-secondary"
+              >
+                Fechar Pedido
+              </NavLink>
             </ModalFooter>
           </Modal>
         </div>

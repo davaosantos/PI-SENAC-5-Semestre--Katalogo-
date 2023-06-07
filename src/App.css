@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.pdf-viewer-container {
+  /* Adicione estilos personalizados aqui para o contêiner do PDFViewer */
+  /* Por exemplo, para remover qualquer estilo de sobreposição: */
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+}
