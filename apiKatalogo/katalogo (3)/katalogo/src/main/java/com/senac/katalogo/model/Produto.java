@@ -1,6 +1,8 @@
 package com.senac.katalogo.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +28,10 @@ public class Produto {
     @Column(name = "imagem")
     private byte[] imagem;
 
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProdutoRegiao> produtoRegioes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<ProdutoRegiao> produtoRegioes = new ArrayList<>();
 
     public Produto() {
     }
@@ -80,4 +83,11 @@ public class Produto {
         this.imagem = imagem;
     }
 
+    public List<ProdutoRegiao> getProdutoRegioes() {
+        return produtoRegioes;
+    }
+
+    public void setProdutoRegioes(List<ProdutoRegiao> produtoRegioes) {
+        this.produtoRegioes = produtoRegioes;
+    }
 }

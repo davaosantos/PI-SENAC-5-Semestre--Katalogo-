@@ -27,9 +27,4 @@ public class EstabelecimentoService {
         return repository.save(estabelecimento);
     }
 
-//    public List<Estabelecimento> buscarEstabelecimentos(Integer idRegiao) {
-//        return repository.findEstabelecimentos(idRegiao);
-//    }
-
-
 }

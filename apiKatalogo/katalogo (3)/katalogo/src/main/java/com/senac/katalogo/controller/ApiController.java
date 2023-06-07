@@ -2,11 +2,10 @@ package com.senac.katalogo.controller;
 
 
 import com.senac.katalogo.model.*;
-import com.senac.katalogo.repository.EstabelecimentoRepository;
-import com.senac.katalogo.repository.ProdutoRegiaoRepository;
-import com.senac.katalogo.repository.ProdutosRepository;
+import com.senac.katalogo.repository.*;
 import com.senac.katalogo.service.AuthService;
 import com.senac.katalogo.service.EstabelecimentoService;
+import com.senac.katalogo.service.PedidoService;
 import com.senac.katalogo.utils.UtilsKatalogo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,6 +33,18 @@ public class ApiController {
     private AuthService authService;
 
     @Autowired
+    private PedidoService pedidoService;
+
+    @Autowired
+    private RegiaoRepository regiaoRepository;
+
+    @Autowired
+    private PedidoRepository pedidoRepository;
+
+    @Autowired
+    private PedidoProdutoRepository pedidoProdutoRepository;
+
+    @Autowired
     private EstabelecimentoService estabelecimentoService;
 
     @RequestMapping(value = "/teste", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -42,21 +53,27 @@ public class ApiController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> credentials, HttpServletResponse response) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
         String username = credentials.get("username");
         String password = credentials.get("password");
         String profile = authService.authenticate(username, password);
+
         if (profile != null) {
-            response.addCookie(new Cookie("profile", profile));
-            return "Login successful";
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Login successful");
+            response.put("profile", profile);
+            return ResponseEntity.ok(response);
         } else {
-            return "Invalid username or password";
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
 
     @PostMapping("/filtroProduto")
     public List<Produto> filtrarProdutos(@RequestBody Filtro filtro) {
         Integer regiao = converterRegiao(filtro.getRegiao());
+        System.out.println(regiao);
 
         return produtoRepository.findByCategoriaAndRegioes(filtro.getCategoria(), Collections.singletonList(regiao));
     }
@@ -129,9 +146,9 @@ public class ApiController {
     @PostMapping("/cadastroEstabelecimento")
     public ResponseEntity<?> cadastrarEstabelecimento(@RequestParam("nome") String nome,
                                                       @RequestParam("descricao") String descricao,
-                                                      @RequestParam("regiao")String regiao,
+                                                      @RequestParam("regiao") String regiao,
                                                       @RequestParam("imagem") MultipartFile imagem
-                                                      ) throws IOException {
+    ) throws IOException {
 
 
         System.out.println(nome);
